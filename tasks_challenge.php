@@ -9,12 +9,14 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 $message = "";
-$points_per_minute = 10;
 
 $task_names = ['Gardening', 'Swimming', 'Walking', 'Stair Climbing', 'Jogging'];
 
-// === Handle Task Completion ===
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['task_name'], $_POST['task_time'], $_POST['confirm_complete']) && $_POST['confirm_complete'] === "1") {
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST'
+    && isset($_POST['task_name'], $_POST['task_time'], $_POST['confirm_complete'])
+    && $_POST['confirm_complete'] === "1"
+) {
     $task_name = $_POST['task_name'];
     $task_time = (int)$_POST['task_time'];
 
@@ -23,27 +25,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['task_name'], $_POST['
     } elseif ($task_time <= 0) {
         $message = "⏳ Please enter a valid time.";
     } else {
-        $stmt = $conn->prepare("SELECT id FROM tasks WHERE name = ?");
-        $stmt->bind_param("s", $task_name);
-        $stmt->execute();
-        $stmt->bind_result($task_id);
-        if ($stmt->fetch()) {
-            $stmt->close();
-            $points = $task_time * $points_per_minute;
-
-            $stmt = $conn->prepare("INSERT INTO user_tasks (user_id, task_id, time_minutes, points_earned) VALUES (?, ?, ?, ?)");
-            $stmt->bind_param("iiii", $user_id, $task_id, $task_time, $points);
-            if ($stmt->execute()) {
-                $message = "✅ Task completed! You earned $points points.";
-                $stmt->close();
-
-                $stmt = $conn->prepare("INSERT INTO user_progress (user_id, points, level) VALUES (?, ?, 1)
-                                        ON DUPLICATE KEY UPDATE points = points + ?");
-                $stmt->bind_param("iii", $user_id, $points, $points);
-                $stmt->execute();
-                $stmt->close();
-            }
+        $stmt = $conn->prepare("INSERT INTO user_daily_tasks (user_id, task_name, duration) VALUES (?, ?, ?)");
+        if (!$stmt) {
+            die("❌ Prepare failed: " . $conn->error);
         }
+        $stmt->bind_param("isi", $user_id, $task_name, $task_time);
+        if (!$stmt->execute()) {
+            die("❌ Execute failed: " . $stmt->error);
+        }
+        $stmt->close();
+
+        $message = "✅ Task completed and saved to database!";
     }
 }
 ?>
@@ -51,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['task_name'], $_POST['
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Task Challenge | CalmQuest</title>
     <style>
         body {
@@ -130,10 +122,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['task_name'], $_POST['
         </select><br />
 
         <label>Time (minutes):</label><br />
-        <input type="number" name="task_time" id="task_time" min="1" max="180" required><br />
+        <input type="number" name="task_time" id="task_time" min="1" max="180" required /><br />
 
         <div id="timer" style="display:none;">00:00</div>
-        <input type="hidden" name="confirm_complete" id="confirm_complete" value="0">
+        <input type="hidden" name="confirm_complete" id="confirm_complete" value="0" />
 
         <button type="button" class="btn" id="startBtn">Start Timer</button>
         <button type="submit" class="btn" id="submitBtn" disabled>Submit</button>
@@ -150,6 +142,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['task_name'], $_POST['
     const taskTimeInput = document.getElementById('task_time');
     const taskSelect = document.getElementById('task_name');
 
+    let timerInterval;
+
     startBtn.addEventListener('click', () => {
         const minutes = parseInt(taskTimeInput.value, 10);
         const taskSelected = taskSelect.value;
@@ -159,8 +153,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['task_name'], $_POST['
         }
 
         let timeLeft = minutes * 60;
-        taskTimeInput.disabled = true;
-        taskSelect.disabled = true;
+        taskTimeInput.readOnly = true;   // readOnly still submits value
+        taskSelect.readOnly = true;      // custom attribute, does not block submit
         startBtn.disabled = true;
         submitBtn.disabled = true;
         confirmCompleteInput.value = 0;
@@ -168,7 +162,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['task_name'], $_POST['
         timerDisplay.style.display = "block";
         updateTimerDisplay(timeLeft);
 
-        const timerInterval = setInterval(() => {
+        if (timerInterval) clearInterval(timerInterval);
+
+        timerInterval = setInterval(() => {
             timeLeft--;
             if (timeLeft <= 0) {
                 clearInterval(timerInterval);

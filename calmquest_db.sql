@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS user_tasks;
 DROP TABLE IF EXISTS tasks;
 DROP TABLE IF EXISTS user_progress;
 DROP TABLE IF EXISTS stress_logs;
-DROP TABLE IF EXISTS users;
+
 
 -- Create and use the database
 CREATE DATABASE IF NOT EXISTS calmquest_db;
@@ -39,17 +39,25 @@ CREATE TABLE IF NOT EXISTS stress_logs (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Tasks table
-CREATE TABLE IF NOT EXISTS tasks (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL UNIQUE
+CREATE TABLE user_progress (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    log_date DATE NOT NULL,
+    type ENUM('meditation', 'yoga') NOT NULL,
+    duration INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Insert the predefined tasks
-INSERT INTO tasks (name) VALUES 
-('Gardening'),
-('Swimming'), 
-('Walking'),
-('Stair Climbing'),
-('Jogging')
-ON DUPLICATE KEY UPDATE name = name;
+DROP TABLE IF EXISTS user_daily_tasks;
+
+CREATE TABLE IF NOT EXISTS user_daily_tasks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    task_name VARCHAR(100) NOT NULL,
+    duration INT NOT NULL, -- in minutes
+    date DATE NOT NULL DEFAULT CURRENT_DATE,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+

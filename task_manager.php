@@ -1,8 +1,39 @@
 <?php
 session_start();
+include "db.php";
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: main.php");
     exit();
+}
+
+$message = "";
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['meditation_time'], $_POST['yoga_time'])) {
+    $user_id = $_SESSION['user_id'];
+    $meditation_time = (int)$_POST['meditation_time'];
+    $yoga_time = (int)$_POST['yoga_time'];
+
+    if ($meditation_time > 0 && $yoga_time > 0) {
+        // Set timezone to ensure consistent date handling
+        date_default_timezone_set('Asia/Dhaka'); // Adjust to your timezone
+        $today = date('Y-m-d');
+
+        // Insert meditation
+        $stmt = $conn->prepare("INSERT INTO user_progress (user_id, log_date, type, duration) VALUES (?, ?, 'meditation', ?)");
+        $stmt->bind_param("isi", $user_id, $today, $meditation_time);
+        $stmt->execute();
+        $stmt->close();
+
+        // Insert yoga
+        $stmt = $conn->prepare("INSERT INTO user_progress (user_id, log_date, type, duration) VALUES (?, ?, 'yoga', ?)");
+        $stmt->bind_param("isi", $user_id, $today, $yoga_time);
+        $stmt->execute();
+        $stmt->close();
+
+        $message = "✅ Meditation and yoga logged successfully for " . $today . "!";
+    } else {
+        $message = "❌ Invalid meditation or yoga time.";
+    }
 }
 ?>
 
@@ -46,15 +77,7 @@ if (!isset($_SESSION['user_id'])) {
         select {
             background-color: #dae7edff;
             color: black;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 10px 15px;
-            font-size: 16px;
-            margin-top: 15px;
             appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            cursor: pointer;
         }
 
         .exit-btn {
@@ -80,20 +103,42 @@ if (!isset($_SESSION['user_id'])) {
             margin: 15px 0;
             color: #267fbbff;
         }
+
+        .message {
+            font-weight: bold;
+            margin: 15px 0;
+            color: green;
+        }
+
+        .debug-info {
+            background: #e8f4fd;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #333;
+        }
     </style>
 </head>
 <body>
 
 <div class="box">
-    <h2>🧘‍♀️ Hello, <?= htmlspecialchars($_SESSION['username']) ?>! Let’s Breathe & Stretch</h2>
+    <h2>🧘‍♀️ Hello, <?= htmlspecialchars($_SESSION['username']) ?>! Let's Breathe & Stretch</h2>
     <h2>"Complete both parts to finish the task."</h2>
 
-    <form id="breathingForm" onsubmit="resetAll(); return false;">
+    <!-- Debug info to show current date -->
+    
+
+    <?php if ($message): ?>
+        <div class="message"><?= htmlspecialchars($message) ?></div>
+    <?php endif; ?>
+
+    <form id="breathingForm" method="POST">
         <!-- Meditation Section -->
         <div style="margin-bottom: 30px;">
             <h3>🫁 Meditation</h3>
             <label for="breathing_time">Select slow breathing time (minutes):</label><br />
-            <select name="breathing_time" id="breathing_time" required>
+            <select name="meditation_time" id="breathing_time" required>
                 <option value="" disabled selected>Select time</option>
                 <?php for ($i = 1; $i <= 10; $i++): ?>
                     <option value="<?= $i ?>"><?= $i ?> minute<?= $i > 1 ? "s" : "" ?></option>
@@ -102,14 +147,14 @@ if (!isset($_SESSION['user_id'])) {
             <br />
             <button type="button" class="btn" id="startMeditationBtn">Start Meditation</button>
             <div id="meditation_timer" style="display:none;">00:00</div>
-            <label><input type="checkbox" id="meditation_check" name="meditation_check" value="1" disabled> Meditation Done</label>
+            <label><input type="checkbox" id="meditation_check" value="1" disabled> Meditation Done</label>
         </div>
 
         <!-- Yoga Section -->
         <div>
             <h3>🧘‍♂️ Yoga Poses</h3>
             <ul>
-                <li>Child’s Pose (Balasana)</li>
+                <li>Child's Pose (Balasana)</li>
                 <li>Cat-Cow Stretch</li>
                 <li>Legs-Up-The-Wall (Viparita Karani)</li>
                 <li>Seated Forward Bend</li>
@@ -125,13 +170,12 @@ if (!isset($_SESSION['user_id'])) {
             <br />
             <button type="button" class="btn" id="startYogaBtn">Start Yoga</button>
             <div id="yoga_timer" style="display:none;">00:00</div>
-            <label><input type="checkbox" id="yoga_check" name="yoga_check" value="1" disabled>Yoga Done</label>
+            <label><input type="checkbox" id="yoga_check" value="1" disabled> Yoga Done</label>
         </div>
 
         <br />
         <button type="submit" class="btn" id="submitBtn" disabled>Done</button>
-       <a href="dashboard.php" class="exit-btn">← Back</a>
-
+        <a href="dashboard.php" class="exit-btn">← Back</a>
     </form>
 </div>
 
@@ -206,19 +250,6 @@ if (!isset($_SESSION['user_id'])) {
 
     function checkReadyToSubmit() {
         submitBtn.disabled = !(meditationCheck.checked && yogaCheck.checked);
-    }
-
-    function resetAll() {
-        clearInterval(window.meditationInterval);
-        clearInterval(window.yogaInterval);
-        document.getElementById('breathingForm').reset();
-        meditationCheck.checked = false;
-        meditationCheck.disabled = true;
-        yogaCheck.checked = false;
-        yogaCheck.disabled = true;
-        breathTimerDisplay.style.display = 'none';
-        yogaTimerDisplay.style.display = 'none';
-        submitBtn.disabled = true;
     }
 </script>
 

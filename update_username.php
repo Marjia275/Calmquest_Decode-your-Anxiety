@@ -27,10 +27,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $message = "Username cannot be empty.";
     } elseif (strlen($newUsername) < 3) {
         $message = "Username must be at least 3 characters.";
+    } elseif (strlen($newUsername) > 10) {
+        $message = "Username must be no more than 10 characters.";
     } else {
         $userId = $_SESSION['user_id'];
 
-        // Optional: check if username already exists in DB
+        // Optional: check if username already exists in DB except current user
         $check = $conn->prepare("SELECT id FROM users WHERE username = ? AND id != ?");
         $check->bind_param("si", $newUsername, $userId);
         $check->execute();
@@ -59,6 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
     <meta charset="UTF-8" />
     <title>Update Username | CalmQuest</title>
+    
     <style>
         body {
             background: linear-gradient(to bottom right, #b2e4ecff, #efd6deff);
@@ -131,12 +134,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <body>
     <div class="container">
         <h2>Update Your Username</h2>
+        <h4>(max. 10 characters)</h4>
         <form method="POST" action="">
             <input
                 type="text"
                 name="username"
                 placeholder="Enter new username"
                 required
+                maxlength="10"
                 value="<?= htmlspecialchars($_SESSION['username']); ?>"
             />
             <button type="submit" class="btn">Update Username</button>
