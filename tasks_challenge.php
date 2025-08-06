@@ -35,7 +35,7 @@ if (
         }
         $stmt->close();
 
-        $message = "✅ Task completed and saved to database!";
+        
     }
 }
 ?>

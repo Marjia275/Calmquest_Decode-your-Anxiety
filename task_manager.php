@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['meditation_time'], $_
         $stmt->execute();
         $stmt->close();
 
-        $message = "✅ Meditation and yoga logged successfully for " . $today . "!";
+     
     } else {
         $message = "❌ Invalid meditation or yoga time.";
     }
