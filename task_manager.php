@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['meditation_time'], $_
     <link rel="stylesheet" href="style.css" />
     <style>
         body {
-            background-color: #102129ff;
+            background-color:  #102129ff;
             font-family: Arial, sans-serif;
             color: black;
             text-align: center;

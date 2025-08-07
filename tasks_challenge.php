@@ -47,7 +47,7 @@ if (
     <title>Task Challenge | CalmQuest</title>
     <style>
         body {
-            background-color: #d2e5eeff;
+            background-color:  #d2e5eeff;
             font-family: Arial, sans-serif;
             text-align: center;
             color: black;
