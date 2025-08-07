@@ -140,229 +140,233 @@ $entriesByDate = array_reverse($entriesByDate, true);
     <meta charset="UTF-8" />
     <title>Full History | CalmQuest</title>
     <style>
-        /* Reset and base */
-        * {
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to right, #c6ecf2ff, #e5cdd5ff);
-            margin: 0;
-            padding: 30px 15px;
-            color: #333;
-        }
-        .box {
-            max-width: 1000px;
-            margin: 0 auto 50px;
-            background: #fff;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-            padding: 40px 50px 50px;
-        }
-        h2 {
-            text-align: center;
-            font-weight: 700;
-            font-size: 2.2rem;
-            color: #004d80;
-            margin-bottom: 40px;
-        }
+       /* Reset and base */
+* {
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to right, #c6ecf2ff, #e5cdd5ff);
+    margin: 0;
+    padding: 30px 15px;
+    color: #333;
+}
+.box {
+    max-width: 700px;           /* Reduced width */
+    margin: 0 auto 50px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    padding: 25px 30px 35px;    /* Reduced padding */
+}
+h2 {
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.6rem;          /* Smaller font size */
+    color: #004d80;
+    margin-bottom: 30px;
+}
 
-        /* Search form */
-        form.search-form {
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-        form.search-form input[type="date"] {
-            padding: 10px 15px;
-            font-size: 1.1rem;
-            border: 1.5px solid #007acc;
-            border-radius: 8px;
-            transition: border-color 0.3s ease;
-            width: 180px;
-        }
-        form.search-form input[type="date"]:focus {
-            outline: none;
-            border-color: #005a99;
-            box-shadow: 0 0 6px #005a99aa;
-        }
-        form.search-form button {
-            padding: 10px 25px;
-            font-size: 1.1rem;
-            background-color: #007acc;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            box-shadow: 0 3px 6px rgba(0,122,204,0.4);
-        }
-        form.search-form button:hover {
-            background-color: #005a99;
-            box-shadow: 0 5px 12px rgba(0,90,153,0.6);
-        }
-        form.search-form a {
-            align-self: center;
-            color: #007acc;
-            font-weight: 600;
-            text-decoration: none;
-            padding: 0 10px;
-            font-size: 1rem;
-            border-radius: 6px;
-            transition: background-color 0.2s ease;
-        }
-        form.search-form a:hover {
-            background-color: #e1f0ff;
-        }
+/* Search form */
+form.search-form {
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+form.search-form input[type="date"] {
+    padding: 8px 12px;          /* Smaller padding */
+    font-size: 1rem;            /* Smaller font */
+    border: 1.5px solid #007acc;
+    border-radius: 8px;
+    transition: border-color 0.3s ease;
+    width: 160px;               /* Slightly narrower */
+}
+form.search-form input[type="date"]:focus {
+    outline: none;
+    border-color: #005a99;
+    box-shadow: 0 0 6px #005a99aa;
+}
+form.search-form button {
+    padding: 8px 20px;          /* Smaller padding */
+    font-size: 1rem;            /* Smaller font */
+    background-color: #007acc;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0,122,204,0.4);
+}
+form.search-form button:hover {
+    background-color: #005a99;
+    box-shadow: 0 5px 12px rgba(0,90,153,0.6);
+}
+form.search-form a {
+    align-self: center;
+    color: #007acc;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 0 10px;
+    font-size: 0.9rem;           /* Smaller font */
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+form.search-form a:hover {
+    background-color: #e1f0ff;
+}
 
-        /* Error message */
-        p.error-message {
-            color: #c0392b;
-            font-weight: 600;
-            text-align: center;
-            margin-bottom: 25px;
-            font-size: 1.1rem;
-        }
+/* Error message */
+p.error-message {
+    color: #c0392b;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 1rem;            /* Smaller font */
+}
 
-        /* Date blocks */
-        .date-block {
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            padding: 25px 30px 35px;
-            margin-bottom: 2.8em;
-            background: #fefefe;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            transition: box-shadow 0.25s ease;
-            position: relative;
-        }
-        .date-block:hover {
-            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-        }
+/* Date blocks */
+.date-block {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 20px 25px 30px;    /* Reduced padding */
+    margin-bottom: 2.8em;
+    background: #fefefe;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transition: box-shadow 0.25s ease;
+    position: relative;
+}
+.date-block:hover {
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
 
-        /* Date title with delete button */
-        .date-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #007acc;
-            margin-bottom: 1.3em;
-            cursor: pointer;
-            user-select: none;
-            position: relative;
-            padding-right: 120px;
-        }
-        .date-title:hover::after {
-            content: "📌 Data is here";
-            position: absolute;
-            top: 105%;
-            left: 0;
-            background: #007acc;
-            color: white;
-            padding: 5px 10px;
-            font-size: 0.85rem;
-            border-radius: 5px;
-            white-space: nowrap;
-            opacity: 0.95;
-            pointer-events: none;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-        }
+/* Date title with delete button */
+.date-title {
+    font-size: 1.1rem;          /* Smaller font */
+    font-weight: 700;
+    color: #007acc;
+    margin-bottom: 1.3em;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    padding-right: 100px;       /* Slightly less right padding */
+}
+.date-title:hover::after {
+    content: "📌 Data is here";
+    position: absolute;
+    top: 105%;
+    left: 0;
+    background: #007acc;
+    color: white;
+    padding: 5px 10px;
+    font-size: 0.85rem;
+    border-radius: 5px;
+    white-space: nowrap;
+    opacity: 0.95;
+    pointer-events: none;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
 
-        /* Delete button */
-        form.delete-form {
-            position: absolute;
-            right: 30px;
-            top: 20px;
-            margin: 0;
-        }
-        .delete-btn {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.95rem;
-            font-weight: 600;
-            box-shadow: 0 3px 7px rgba(231, 76, 60, 0.7);
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        .delete-btn:hover {
-            background-color: #c0392b;
-            box-shadow: 0 5px 14px rgba(192, 57, 43, 0.8);
-        }
+/* Delete button */
+form.delete-form {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+}
 
-        /* Split content */
-        .split-box {
-            display: flex;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-        .left, .right {
-            flex: 1 1 45%;
-            padding: 15px 25px;
-            background: #f9f9f9;
-            border-radius: 15px;
-            border: 1px solid #ddd;
-            box-shadow: inset 0 2px 5px #e0e0e0;
-        }
+.delete-btn {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 6px 14px;           /* Smaller padding */
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.85rem;          /* Smaller font */
+    font-weight: 600;
+    box-shadow: 0 3px 7px rgba(231, 76, 60, 0.7);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.delete-btn:hover {
+    background-color: #c0392b;
+    box-shadow: 0 5px 14px rgba(192, 57, 43, 0.8);
+}
 
-        /* Log sections */
-        .log-section {
-            margin-bottom: 1.6em;
-        }
-        .log-section strong {
-            display: block;
-            margin-bottom: 0.8em;
-            color: #555;
-            font-size: 1.05rem;
-            border-bottom: 2px solid #007acc;
-            padding-bottom: 5px;
-            font-weight: 700;
-            letter-spacing: 0.03em;
-        }
-        .log-section ul {
-            padding-left: 25px;
-            margin: 0;
-        }
-        .log-section li {
-            margin-bottom: 7px;
-            font-size: 1rem;
-            color: #444;
-        }
-        .log-section small {
-            color: #777;
-            font-style: italic;
-            display: block;
-            margin-top: 6px;
-            font-weight: 600;
-        }
+/* Split content */
+.split-box {
+    display: flex;
+    gap: 20px;                  /* Slightly smaller gap */
+    flex-wrap: wrap;
+}
+.left, .right {
+    flex: 1 1 45%;
+    padding: 12px 20px;         /* Reduced padding */
+    background: #f9f9f9;
+    border-radius: 15px;
+    border: 1px solid #ddd;
+    box-shadow: inset 0 2px 5px #e0e0e0;
+}
 
-        .empty-state {
-            font-style: italic;
-            color: #999;
-            font-size: 1rem;
-            margin-top: 8px;
-        }
+/* Log sections */
+.log-section {
+    margin-bottom: 1.2em;       /* Smaller margin */
+}
+.log-section strong {
+    display: block;
+    margin-bottom: 0.8em;
+    color: #555;
+    font-size: 1rem;            /* Smaller font */
+    border-bottom: 2px solid #007acc;
+    padding-bottom: 5px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+.log-section ul {
+    padding-left: 25px;
+    margin: 0;
+}
+.log-section li {
+    margin-bottom: 7px;
+    font-size: 0.9rem;          /* Smaller font */
+    color: #444;
+}
+.log-section small {
+    color: #777;
+    font-style: italic;
+    display: block;
+    margin-top: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;         /* Smaller font */
+}
 
-        /* Back button */
-        a.btn {
-            display: inline-block;
-            margin-top: 25px;
-            padding: 14px 30px;
-            background-color: #007acc;
-            color: white;
-            text-decoration: none;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 15px rgba(0,122,204,0.6);
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        a.btn:hover {
-            background-color: #005a99;
-            box-shadow: 0 6px 22px rgba(0,90,153,0.8);
-        }
+.empty-state {
+    font-style: italic;
+    color: #999;
+    font-size: 0.9rem;          /* Smaller font */
+    margin-top: 8px;
+}
+
+/* Back button */
+a.btn {
+    display: inline-block;
+    margin-top: 25px;
+    padding: 12px 28px;         /* Smaller padding */
+    background-color: #007acc;
+    color: white;
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;            /* Smaller font */
+    box-shadow: 0 4px 15px rgba(0,122,204,0.6);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+a.btn:hover {
+    background-color: #005a99;
+    box-shadow: 0 6px 22px rgba(0,90,153,0.8);
+}
+
     </style>
 </head>
 <body>
