@@ -38,15 +38,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             if ($resultCombo && $resultCombo->num_rows > 0) {
                 $message = "This name and password combination is already in use. Try a different name or password.";
             } else {
-                // Generate unique username
-                do {
-                    $generatedUsername = 'user' . rand(1000, 9999);
-                    $checkUsername = $conn->prepare("SELECT id FROM users WHERE username = ?");
-                    $checkUsername->bind_param("s", $generatedUsername);
-                    $checkUsername->execute();
-                    $usernameExists = $checkUsername->get_result()->num_rows > 0;
-                    $checkUsername->close();
-                } while ($usernameExists);
+               // Use signup name as username (check uniqueness)
+$generatedUsername = $name;
+$checkUsername = $conn->prepare("SELECT id FROM users WHERE username = ?");
+$checkUsername->bind_param("s", $generatedUsername);
+$checkUsername->execute();
+$usernameExists = $checkUsername->get_result()->num_rows > 0;
+$checkUsername->close();
+
+if ($usernameExists) {
+    $message = "This username is already taken. Please use a different name.";
+}
 
                 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
