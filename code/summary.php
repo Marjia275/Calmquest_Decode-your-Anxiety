@@ -50,7 +50,7 @@ $search_date = $_GET['search_date'] ?? '';
 // Initialize array to hold all entries grouped by date
 $entriesByDate = [];
 
-// Base queries have no date filter or filter by $search_date
+//  filter by $search_date
 $date_filter_sql = "";
 if ($search_date && preg_match('/^\d{4}-\d{2}-\d{2}$/', $search_date)) {
     $date_filter_sql = " AND date = ?";
